@@ -1,12 +1,13 @@
 #include "GMLScriptEnv/stdafx.h"
 #include <vector>
-#include "GMLInternals.h"
-#include "GMLScriptEnv/MemTools.h"
 #include "GMLScriptEnv/GMLInternals.h"
+#include "GMLScriptEnv/MemTools.h"
 #include <cstdint>
 #include "GMLScriptEnv/detours.h"
 #include <cmath>
 #include "GMLScriptEnv/EventHooks.h"
+
+#pragma comment(lib, "detours.lib")
 
 // Helper function for installing hooks,
 // returns null if the hook failed, otherwise returns the original hooked method
