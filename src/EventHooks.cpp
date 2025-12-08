@@ -1,12 +1,12 @@
-#include "stdafx.h"
+#include "GMLScriptEnv/stdafx.h"
 #include <vector>
 #include "GMLInternals.h"
-#include "MemTools.h"
-#include "GMLInternals.h"
+#include "GMLScriptEnv/MemTools.h"
+#include "GMLScriptEnv/GMLInternals.h"
 #include <cstdint>
-#include "detours.h"
+#include "GMLScriptEnv/detours.h"
 #include <cmath>
-#include "EventHooks.h"
+#include "GMLScriptEnv/EventHooks.h"
 
 // Helper function for installing hooks,
 // returns null if the hook failed, otherwise returns the original hooked method
