@@ -2,7 +2,6 @@
 #include <vector>
 #include "GMLInternals.h"
 #include "MemTools.h"
-#include "DebugTools.h"
 #include "GMLInternals.h"
 #include <cstdint>
 #include "detours.h"
