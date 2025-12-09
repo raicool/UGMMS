@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#include "GMLInternals.h"
-#include "RoomHelper.h"
-#include "HelperHelper.h"
+#include "GMLScriptEnv/stdafx.h"
+#include "GMLScriptEnv/GMLInternals.h"
+#include "GMLScriptEnv/RoomHelper.h"
+#include "GMLScriptEnv/HelperHelper.h"
 
 namespace RoomHelper {
 	int roomCount = -1;
