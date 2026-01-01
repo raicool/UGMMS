@@ -6,19 +6,25 @@
 
 #include "loader/log.h"
 
-namespace SpriteHelper {
+namespace SpriteHelper 
+{
 	int spriteCount = -1;
 
-	void __InitialSetup() {
+	void __InitialSetup() 
+	{
 		if (spriteCount != -1) return;
-		spriteCount = HelperHelper::countResource(GMLInternals::getFunctionID("sprite_exists"));
+		func_info sprite_exists = GMLInternals::get_function_info("sprite_exists");
+		spriteCount = HelperHelper::countResource(sprite_exists.id);
 	}
 
-	int getSpriteCount() {
+	int getSpriteCount() 
+	{
 		return spriteCount;
 	}
 
-	void spriteLoaderMod() {
+	/*
+	void spriteLoaderMod() 
+	{
 		// TODO - clean up any memory leaks here
 		// Fetch function IDs
 		int sprite_get_name = GMLInternals::getFunctionID("sprite_get_name");
@@ -49,7 +55,8 @@ namespace SpriteHelper {
 			GMLInternals::callGMLFunction(file_exists, 1, argsExists, exists);
 
 			// If the file exists...
-			if (exists->truthy()) {
+			if (exists->truthy()) 
+			{
 				// Fetch sprite properties
 				GMLVar* speed = NULL;
 				GMLVar* speedType = NULL;
@@ -61,7 +68,8 @@ namespace SpriteHelper {
 				GMLInternals::callGMLFunction(sprite_get_xoffset, 1, argsGet, xorigin);
 				GMLInternals::callGMLFunction(sprite_get_yoffset, 1, argsGet, yorigin);
 
-				if (supportSpeed) {
+				if (supportSpeed) 
+				{
 					GMLInternals::callGMLFunction(sprite_get_speed, 1, argsGet, speed);
 					GMLInternals::callGMLFunction(sprite_get_speed_type, 1, argsGet, speedType);
 				}
@@ -75,7 +83,8 @@ namespace SpriteHelper {
 				GMLInternals::callGMLFunction(file_exists, 1, argsIni, iniExists);
 
 				// If the ini exists...
-				if (iniExists->truthy()) {
+				if (iniExists->truthy()) 
+				{
 					// Open it
 					GMLInternals::callGMLFunction(ini_open, 1, argsIni);
 					// Store original properties to delete
@@ -101,7 +110,8 @@ namespace SpriteHelper {
 					GMLInternals::callGMLFunction(ini_read_real, 3, argsIniXoffset, xorigin);
 					GMLVar* argsIniYoffset[] = { &sprite_str, &yoffset_str, yoriginOld };
 					GMLInternals::callGMLFunction(ini_read_real, 3, argsIniYoffset, yorigin);
-					if (supportSpeed) {
+					if (supportSpeed) 
+					{
 						GMLVar* argsIniSpeed[] = { &sprite_str, &speed_str, speedOld };
 						GMLInternals::callGMLFunction(ini_read_real, 3, argsIniSpeed, speed);
 						GMLVar* argsIniSpeedType[] = { &sprite_str, &speedType_str, speedTypeOld };
@@ -114,7 +124,8 @@ namespace SpriteHelper {
 					// Clean old properties
 					delete xoriginOld;
 					delete yoriginOld;
-					if (supportSpeed) {
+					if (supportSpeed) 
+					{
 						delete speedOld;
 						delete speedTypeOld;
 					}
@@ -129,9 +140,11 @@ namespace SpriteHelper {
 				GMLVar* argsSpriteAdd[] = { &fileName, number, &zero, &zero, xorigin, yorigin };
 				GMLVar* newSprite = nullptr;
 				GMLInternals::callGMLFunction(sprite_add, 6, argsSpriteAdd, newSprite);
-				if (newSprite->getReal() > 0) {
+				if (newSprite->getReal() > 0) 
+				{
 					// Set final properties
-					if (supportSpeed) {
+					if (supportSpeed) 
+					{
 						GMLVar* argsSetSpeed[] = { newSprite, speed, speedType };
 						GMLInternals::callGMLFunction(sprite_set_speed, 3, argsSetSpeed);
 					}
@@ -139,7 +152,8 @@ namespace SpriteHelper {
 					GMLVar* argsSpriteAssign[] = { &i, newSprite };
 					GMLInternals::callGMLFunction(sprite_assign, 2, argsSpriteAssign);
 				}
-				else {
+				else 
+				{
 					// Failed to load :(
 					loader_log_error("Failed to load the sprite {}", name->getString());
 				}
@@ -162,4 +176,5 @@ namespace SpriteHelper {
 			delete exists;
 		}
 	}
+	*/
 }

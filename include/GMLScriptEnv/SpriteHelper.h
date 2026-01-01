@@ -1,6 +1,7 @@
 #pragma once
 
-namespace SpriteHelper {
+namespace SpriteHelper 
+{
 	void __InitialSetup();
 	// Loads sprite replacements from a "sprites" subdirectory
 	void spriteLoaderMod();

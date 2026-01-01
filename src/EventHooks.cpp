@@ -12,7 +12,7 @@
 // Helper function for installing hooks,
 // returns null if the hook failed, otherwise returns the original hooked method
 void* InstallHook(std::vector<BYTE> dat, void* hookFunction) {
-    BYTE* addr = MemTools::scan(dat);
+    void* addr = MemTools::scan(dat);
 
     if (addr == nullptr) {
         // Failed to find function to hook
