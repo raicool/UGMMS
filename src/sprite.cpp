@@ -1,20 +1,19 @@
 #include "GMLScriptEnv/gml.h"
-#include "GMLScriptEnv/GMLInternals.h"
-#include "GMLScriptEnv/HelperHelper.h"
+#include "GMLScriptEnv/resources.h"
 #include "GMLScriptEnv/stdafx.h"
-#include "GMLScriptEnv/SpriteHelper.h"
+#include "GMLScriptEnv/sprite.h"
 
 #include "loader/log.h"
 
-namespace SpriteHelper 
+namespace sprite 
 {
 	int spriteCount = -1;
 
-	void __InitialSetup() 
+	void __initial_setup() 
 	{
 		if (spriteCount != -1) return;
-		func_info sprite_exists = GMLInternals::get_function_info("sprite_exists");
-		spriteCount = HelperHelper::countResource(sprite_exists.id);
+		func_info sprite_exists = get_func_info("sprite_exists");
+		spriteCount = resources::count(sprite_exists.id);
 	}
 
 	int getSpriteCount() 
@@ -47,12 +46,12 @@ namespace SpriteHelper
 			// Get the name of the sprite
 			GMLVar* argsGet[] = { &i };
 			GMLVar* name = nullptr;
-			GMLInternals::callGMLFunction(sprite_get_name, 1, argsGet, name);
+			GMLInternals::gml_call_func(sprite_get_name, 1, argsGet, name);
 			// See if the file exists
 			GMLVar fileName = GMLVar(("sprites/" + name->getString() + ".png").c_str());
 			GMLVar* argsExists[] = { &fileName };
 			GMLVar* exists = nullptr;
-			GMLInternals::callGMLFunction(file_exists, 1, argsExists, exists);
+			GMLInternals::gml_call_func(file_exists, 1, argsExists, exists);
 
 			// If the file exists...
 			if (exists->truthy()) 
@@ -65,28 +64,28 @@ namespace SpriteHelper
 				GMLVar* number = nullptr;
 				GMLVar* iniExists = nullptr;
 
-				GMLInternals::callGMLFunction(sprite_get_xoffset, 1, argsGet, xorigin);
-				GMLInternals::callGMLFunction(sprite_get_yoffset, 1, argsGet, yorigin);
+				GMLInternals::gml_call_func(sprite_get_xoffset, 1, argsGet, xorigin);
+				GMLInternals::gml_call_func(sprite_get_yoffset, 1, argsGet, yorigin);
 
 				if (supportSpeed) 
 				{
-					GMLInternals::callGMLFunction(sprite_get_speed, 1, argsGet, speed);
-					GMLInternals::callGMLFunction(sprite_get_speed_type, 1, argsGet, speedType);
+					GMLInternals::gml_call_func(sprite_get_speed, 1, argsGet, speed);
+					GMLInternals::gml_call_func(sprite_get_speed_type, 1, argsGet, speedType);
 				}
 
-				GMLInternals::callGMLFunction(sprite_get_number, 1, argsGet, number);
+				GMLInternals::gml_call_func(sprite_get_number, 1, argsGet, number);
 
 				// Look for ini
 				GMLVar iniFile = GMLVar(("sprites/" + name->getString() + ".ini").c_str());
 				GMLVar* argsIni[] = { &iniFile };
 
-				GMLInternals::callGMLFunction(file_exists, 1, argsIni, iniExists);
+				GMLInternals::gml_call_func(file_exists, 1, argsIni, iniExists);
 
 				// If the ini exists...
 				if (iniExists->truthy()) 
 				{
 					// Open it
-					GMLInternals::callGMLFunction(ini_open, 1, argsIni);
+					GMLInternals::gml_call_func(ini_open, 1, argsIni);
 					// Store original properties to delete
 					GMLVar* speedOld = NULL;
 					GMLVar* speedTypeOld = NULL;
@@ -107,20 +106,20 @@ namespace SpriteHelper
 					GMLVar speed_str("speed");
 					GMLVar frames_str("frames");
 					GMLVar* argsIniXoffset[] = { &sprite_str, &xoffset_str, xoriginOld };
-					GMLInternals::callGMLFunction(ini_read_real, 3, argsIniXoffset, xorigin);
+					GMLInternals::gml_call_func(ini_read_real, 3, argsIniXoffset, xorigin);
 					GMLVar* argsIniYoffset[] = { &sprite_str, &yoffset_str, yoriginOld };
-					GMLInternals::callGMLFunction(ini_read_real, 3, argsIniYoffset, yorigin);
+					GMLInternals::gml_call_func(ini_read_real, 3, argsIniYoffset, yorigin);
 					if (supportSpeed) 
 					{
 						GMLVar* argsIniSpeed[] = { &sprite_str, &speed_str, speedOld };
-						GMLInternals::callGMLFunction(ini_read_real, 3, argsIniSpeed, speed);
+						GMLInternals::gml_call_func(ini_read_real, 3, argsIniSpeed, speed);
 						GMLVar* argsIniSpeedType[] = { &sprite_str, &speedType_str, speedTypeOld };
-						GMLInternals::callGMLFunction(ini_read_real, 3, argsIniSpeedType, speedType);
+						GMLInternals::gml_call_func(ini_read_real, 3, argsIniSpeedType, speedType);
 					}
 					GMLVar* argsIniFrames[] = { &sprite_str, &frames_str, numberOld };
-					GMLInternals::callGMLFunction(ini_read_real, 3, argsIniFrames, number);
+					GMLInternals::gml_call_func(ini_read_real, 3, argsIniFrames, number);
 					// Close the ini
-					GMLInternals::callGMLFunction(ini_close, 0, NULL);
+					GMLInternals::gml_call_func(ini_close, 0, NULL);
 					// Clean old properties
 					delete xoriginOld;
 					delete yoriginOld;
@@ -139,18 +138,18 @@ namespace SpriteHelper
 				GMLVar zero(0);
 				GMLVar* argsSpriteAdd[] = { &fileName, number, &zero, &zero, xorigin, yorigin };
 				GMLVar* newSprite = nullptr;
-				GMLInternals::callGMLFunction(sprite_add, 6, argsSpriteAdd, newSprite);
+				GMLInternals::gml_call_func(sprite_add, 6, argsSpriteAdd, newSprite);
 				if (newSprite->getReal() > 0) 
 				{
 					// Set final properties
 					if (supportSpeed) 
 					{
 						GMLVar* argsSetSpeed[] = { newSprite, speed, speedType };
-						GMLInternals::callGMLFunction(sprite_set_speed, 3, argsSetSpeed);
+						GMLInternals::gml_call_func(sprite_set_speed, 3, argsSetSpeed);
 					}
 					// Replace the old sprite!
 					GMLVar* argsSpriteAssign[] = { &i, newSprite };
-					GMLInternals::callGMLFunction(sprite_assign, 2, argsSpriteAssign);
+					GMLInternals::gml_call_func(sprite_assign, 2, argsSpriteAssign);
 				}
 				else 
 				{

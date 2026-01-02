@@ -1,10 +1,10 @@
 #include "GMLScriptEnv/stdafx.h"
-#include "GMLScriptEnv/HelperHelper.h"
-#include "GMLScriptEnv/GMLInternals.h"
+#include "GMLScriptEnv/resources.h"
+#include "GMLScriptEnv/gml.h"
 
-namespace HelperHelper 
+namespace resources 
 {
-	int countResource(int checkFunc) 
+	int count(int checkFunc) 
 	{
 		int val = -1;
 		// Call sprite_exists for every id until it returns false
@@ -13,7 +13,7 @@ namespace HelperHelper
 			GMLVar nextID = GMLVar(i);
 			GMLVar* args[] = { &nextID };
 			GMLVar* exists = nullptr;
-			GMLInternals::callGMLFunction(checkFunc, 1, args, exists);
+			gml_call_func(checkFunc, 1, args, exists);
 
 			if (!exists) 
 			{

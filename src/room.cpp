@@ -1,12 +1,12 @@
 #include "GMLScriptEnv/stdafx.h"
-#include "GMLScriptEnv/GMLInternals.h"
-#include "GMLScriptEnv/RoomHelper.h"
-#include "GMLScriptEnv/HelperHelper.h"
-#include "GMLScriptEnv/MemTools.h"
+#include "GMLScriptEnv/gml.h"
+#include "GMLScriptEnv/room.h"
+#include "GMLScriptEnv/resources.h"
+#include "GMLScriptEnv/search.h"
 
 #include <vector>
 
-namespace RoomHelper 
+namespace room 
 {
 	using func_roomdata = CRoom*(*)(int index);
 
@@ -14,23 +14,23 @@ namespace RoomHelper
 
 	int roomCount = -1;
 
-	void __InitialSetup() 
+	void __setup() 
 	{
 		find_room_data();
 
 		if (roomCount != -1) return;
-		func_info room_exists = GMLInternals::get_function_info("room_exists");
-		roomCount = HelperHelper::countResource(room_exists.id);
+		func_info room_exists = get_func_info("room_exists");
+		roomCount = resources::count(room_exists.id);
 	}
 
-	int getRoomCount() 
+	int get_room_count() 
 	{
 		return roomCount;
 	}
 
 	void* find_room_data()
 	{
-		func_info room_instance_clear = GMLInternals::get_function_info("room_instance_clear");
+		func_info room_instance_clear = get_func_info("room_instance_clear");
 
 		std::vector<uint8_t> pattern =
 		{
@@ -39,12 +39,12 @@ namespace RoomHelper
 			0x85, 0xc0,					// test eax, eax
 		};
 
-		void* ptr = MemTools::scanLocal(pattern, room_instance_clear.ptr, 0x80);
+		void* ptr = scan_local(pattern, room_instance_clear.ptr, 0x80);
 		
 		if (ptr)
 		{
 			// found the call instruction, now get the absolute address of room_data
-			room_data = (func_roomdata)MemTools::absolute_address(ptr, *((uint32_t**)((uint8_t*)ptr + 0x01)), 0x05);
+			room_data = (func_roomdata) absolute_address(ptr, *((uint32_t**)((uint8_t*)ptr + 0x01)), 0x05);
 		}
 
 		return room_data;
