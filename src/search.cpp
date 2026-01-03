@@ -42,7 +42,7 @@ const void* scan_memory(void* address_low, std::size_t nbytes, const std::vector
 	return nullptr;
 }
 
-void* scan(const std::vector<uint8_t>& bytes_to_find) 
+void* __impl_scan(const std::vector<uint8_t>& bytes_to_find) 
 {
 	auto base = ::GetModuleHandle(NULL);
 	MODULEINFO minfo{};
@@ -50,7 +50,7 @@ void* scan(const std::vector<uint8_t>& bytes_to_find)
 	return (BYTE*)scan_memory(base, minfo.SizeOfImage, bytes_to_find);
 }
 
-void* scan_local(const std::vector<uint8_t>& bytes_to_find, void* begin, int count)
+void* __impl_scan_local(const std::vector<uint8_t>& bytes_to_find, void* begin, int count)
 {
 	// Scan count bytes from begin for the data in bytes_to_find
 	uint8_t* end = (uint8_t*)begin + count;
@@ -67,7 +67,7 @@ void* scan_local(const std::vector<uint8_t>& bytes_to_find, void* begin, int cou
 	return nullptr;
 }
 
-void* read_ptr(void* start)
+void* __impl_read_ptr(void* start)
 {
 	// Returns a pointer read from the first 4 bytes of memory starting at start
 	uint8_t* address = 0;
@@ -78,7 +78,7 @@ void* read_ptr(void* start)
 	return address;
 }
 
-void* absolute_address(void* source, void* relative_addr, uint8_t instr_size)
+void* __impl_absolute_address(void* source, void* relative_addr, uint8_t instr_size)
 {
 	uint32_t addr = ((uint32_t)source + (uint32_t)relative_addr) + instr_size;
 

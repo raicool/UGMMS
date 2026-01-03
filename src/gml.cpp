@@ -54,7 +54,7 @@ std::string __find_function_map(void* ptr)
 	// Automatically determine size of a function entry
 	// Different between test project and Rivals of Aether, can't be hardcoded
 	std::vector<uint8_t> entryTerminator{ 0xFF, 0xFF, 0xFF, 0xFF };
-	void* ptrEntryTerminator = scan_local(entryTerminator, funcArray, 120);
+	void* ptrEntryTerminator = __impl_scan_local(entryTerminator, funcArray, 120);
 	if (ptrEntryTerminator == NULL)
 	{
 		// Failed to find entry terminator
@@ -108,7 +108,7 @@ std::string __gml_setup()
 	};
 
 	// Search for the function
-	void* legacyCallAddr = scan(binLegacyCallFirst);
+	void* legacyCallAddr = __impl_scan(binLegacyCallFirst);
 	if (legacyCallAddr == NULL)
 	{
 		// Failed to find it
@@ -125,7 +125,7 @@ std::string __gml_setup()
 	};
 
 	// Search for it starting from the end of the first chunk
-	void* legacyCallChunkAddr = scan_local(binLegacyCallSecond, (uint8_t*)legacyCallAddr + binLegacyCallFirst.size(), 64);
+	void* legacyCallChunkAddr = __impl_scan_local(binLegacyCallSecond, (uint8_t*)legacyCallAddr + binLegacyCallFirst.size(), 64);
 	if (GMLLegacyCall == nullptr) {
 		// Failed to find second halfcallGMLFunction
 		GMLLegacyCall = NULL;
@@ -133,7 +133,7 @@ std::string __gml_setup()
 	}
 
 	// Pull the address from the ASM
-	void* funcArrayAddrBase = read_ptr((uint8_t*)legacyCallChunkAddr + 2);
+	void* funcArrayAddrBase = __impl_read_ptr((uint8_t*)legacyCallChunkAddr + 2);
 	// Initialize function array
 	std::string result = __find_function_map(funcArrayAddrBase);
 	if (result != "")
@@ -151,7 +151,7 @@ std::string __gml_setup()
 		0x75, 0x0e,                   // jnz short 0x????
 	};
 
-	void* ptr = scan(jnz_target_pattern);
+	void* ptr = __impl_scan(jnz_target_pattern);
 
 	if (!ptr)
 	{
@@ -174,8 +174,8 @@ std::string __gml_setup()
 		0x83, 0xc4, 0x04          // add esp, 0x4
 	};
 
-	uint8_t* nearest_lea = ((uint8_t*) scan_local(lea_pattern, jump_target, 0x40)) + 2;
-	uint8_t* nearest_mov = ((uint8_t*) scan_local(mov_pattern, jump_target, 0x40)) + 1;
+	uint8_t* nearest_lea = ((uint8_t*)__impl_scan_local(lea_pattern, jump_target, 0x40)) + 2;
+	uint8_t* nearest_mov = ((uint8_t*)__impl_scan_local(mov_pattern, jump_target, 0x40)) + 1;
 
 	builtin_array = reinterpret_cast<RVariableRoutine*>(*(uint32_t*)nearest_lea);
 	builtin_count = reinterpret_cast<int32_t*>(*(uint32_t*)nearest_mov);

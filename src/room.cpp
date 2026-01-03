@@ -16,19 +16,19 @@ namespace room
 
 	void __setup() 
 	{
-		find_room_data();
+		__impl_find_room_data();
 
 		if (roomCount != -1) return;
 		func_info room_exists = get_func_info("room_exists");
 		roomCount = resources::count(room_exists.id);
 	}
 
-	int get_room_count() 
+	int __impl_get_room_count() 
 	{
 		return roomCount;
 	}
 
-	void* find_room_data()
+	void* __impl_find_room_data()
 	{
 		func_info room_instance_clear = get_func_info("room_instance_clear");
 
@@ -39,12 +39,12 @@ namespace room
 			0x85, 0xc0,					// test eax, eax
 		};
 
-		void* ptr = scan_local(pattern, room_instance_clear.ptr, 0x80);
+		void* ptr = __impl_scan_local(pattern, room_instance_clear.ptr, 0x80);
 		
 		if (ptr)
 		{
 			// found the call instruction, now get the absolute address of room_data
-			room_data = (func_roomdata) absolute_address(ptr, *((uint32_t**)((uint8_t*)ptr + 0x01)), 0x05);
+			room_data = (func_roomdata) __impl_absolute_address(ptr, *((uint32_t**)((uint8_t*)ptr + 0x01)), 0x05);
 		}
 
 		return room_data;

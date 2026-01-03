@@ -10,7 +10,7 @@
 // returns null if the hook failed, otherwise returns the original hooked method
 void* InstallHook(std::vector<uint8_t> dat, void* hookFunction) 
 {
-    void* addr = scan(dat);
+    void* addr = __impl_scan(dat);
 
     if (addr == nullptr) 
     {
