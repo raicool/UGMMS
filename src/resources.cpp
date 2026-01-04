@@ -12,8 +12,8 @@ namespace resources
 		{
 			GMLVar nextID = GMLVar(i);
 			GMLVar* args[] = { &nextID };
-			GMLVar* exists = nullptr;
-			gml_call_func(checkFunc, 1, args, exists);
+			GMLVar* exists = gml_call_func(checkFunc, 1, args);
+			
 
 			if (!exists) 
 			{

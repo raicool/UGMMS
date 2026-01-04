@@ -200,16 +200,15 @@ func_info get_func_info(const char* name)
 }
 
 GMLVar* GMLRetDummy = new GMLVar();
-GMLVar* gml_call_func(int functionID, int argCount, GMLVar** args, GMLVar* return_value)
+GMLVar* gml_call_func(int functionID, int argCount, GMLVar** args)
 {
 	if (GMLLegacyCall == NULL) return NULL;
-	if (return_value == NULL)
-	{
-		return_value = GMLRetDummy;
-	}
-	return_value->freeValue();
-	GMLLegacyCall(NULL, NULL, *return_value, argCount, functionID, args);
-	return return_value;
+
+	GMLVar* out = new GMLVar();
+
+	GMLLegacyCall(NULL, NULL, *out, argCount, functionID, args);
+
+	return out;
 }
 
 size_t get_builtin_variable_index(const char* name)

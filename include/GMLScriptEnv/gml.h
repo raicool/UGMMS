@@ -22,8 +22,7 @@ static int32_t* builtin_count = nullptr;
 
 // Call a built-in GM function using its numerical ID
 // Arguments are passed by array
-// Set the noReturn parameter to true if you don't need the function return value, otherwise it must be manually freed
-GMLVar* gml_call_func(int functionID, int argCount, GMLVar** args, GMLVar* return_value = nullptr);
+GMLVar* gml_call_func(int functionID, int argCount, GMLVar** args);
 size_t get_builtin_variable_index(const char* name);
 //GMLScriptPtr getScriptPtr(int scriptID);
 
