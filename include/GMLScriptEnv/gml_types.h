@@ -3,14 +3,23 @@
 class GMLInstanceBase;
 class GMLInstance;
 
-const int GML_TYPE_REAL = 0;
-const int GML_TYPE_STRING = 1;
-const int GML_TYPE_ARRAY = 2;
-const int GML_TYPE_POINTER = 3;
-const int GML_TYPE_UNDEFINED = 5;
-const int GML_TYPE_INT32 = 7;
-const int GML_TYPE_INT64 = 10;
-const int GML_TYPE_BOOL = 13;
+enum
+{
+	GML_TYPE_REAL = 0,
+	GML_TYPE_STRING = 1,
+	GML_TYPE_ARRAY = 2,
+	GML_TYPE_POINTER = 3,
+	GML_TYPE_UNDEFINED = 5,
+	GML_TYPE_OBJECT = 6,
+	GML_TYPE_INT32 = 7,
+	GML_TYPE_VEC4 = 8,
+	GML_TYPE_VEC44 = 9,
+	GML_TYPE_INT64 = 10,
+	GML_TYPE_ACCESSOR = GML_TYPE_INT64 | GML_TYPE_STRING,
+	GML_TYPE_NULL = 12,
+	GML_TYPE_BOOL = 13,
+	GML_TYPE_ITERATOR = 14,
+};
 
 struct GMLStringRef
 {
