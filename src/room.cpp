@@ -19,7 +19,7 @@ namespace room
 		__impl_find_room_data();
 
 		if (room_count != -1) return;
-		func_info room_exists = get_func_info("room_exists");
+		func_info room_exists = __impl_get_func_info("room_exists");
 		room_count = resources_count(room_exists.id);
 	}
 
@@ -30,7 +30,7 @@ namespace room
 
 	void* __impl_find_room_data()
 	{
-		func_info room_instance_clear = get_func_info("room_instance_clear");
+		func_info room_instance_clear = __impl_get_func_info("room_instance_clear");
 
 		std::vector<uint8_t> pattern =
 		{

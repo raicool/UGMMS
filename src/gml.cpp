@@ -8,8 +8,7 @@
 
 CRoomInternal& CRoom::GetMembers()
 {
-	size_t bg_color_idx = get_builtin_variable_index("background_color");
-
+	size_t bg_color_idx = __impl_get_builtin_variable_index("background_color");
 
 	// This lookup will fail in newer runners where backgrounds were removed and return -1
 	if (bg_color_idx != -1)
@@ -187,20 +186,28 @@ std::string __gml_setup()
 // METHODS ///////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-func_info get_func_info(std::string name)
+func_info __impl_get_func_info(
+	_In_ std::string name
+)
 {
 	auto t = functionIDMap->find(name);
 	if (t == functionIDMap->end()) return {};
 	return t->second;
 }
 
-func_info get_func_info(const char* name)
+func_info __impl_get_func_info(
+	_In_ const char* name
+)
 {
-	return get_func_info(std::string(name));
+	return __impl_get_func_info(std::string(name));
 }
 
 GMLVar* GMLRetDummy = new GMLVar();
-GMLVar* gml_call_func(int functionID, int argCount, GMLVar** args)
+GMLVar* __impl_gml_call_func(
+	_In_ int functionID,
+	_In_ int argCount,
+	_In_ GMLVar** args
+)
 {
 	if (GMLLegacyCall == NULL) return NULL;
 
@@ -211,7 +218,9 @@ GMLVar* gml_call_func(int functionID, int argCount, GMLVar** args)
 	return out;
 }
 
-size_t get_builtin_variable_index(const char* name)
+size_t __impl_get_builtin_variable_index(
+	_In_ const char* name
+)
 {
 	for (int i = 0; i < *builtin_count; i++)
 	{
