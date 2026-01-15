@@ -165,7 +165,7 @@ std::string __gml_setup()
 	std::vector<uint8_t> lea_pattern =
 	{
 		0x8d, 0xb8, '?', '?', '?', '?', // lea edi, [memory]
-		0x8b, '?'                      // mov eax, s8
+		0x8b, '?'                       // mov eax, s8
 	};
 
 	std::vector<uint8_t> mov_pattern =
