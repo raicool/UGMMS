@@ -2,33 +2,27 @@
 #include "GMLScriptEnv/resources.h"
 #include "GMLScriptEnv/gml.h"
 
-namespace resources 
+int resources_count(int func_id)
 {
-	int count(int checkFunc) 
+	int val = -1;
+
+	for (int i = 0;; i++)
 	{
-		int val = -1;
-		// Call sprite_exists for every id until it returns false
-		for (int i = 0; true; i++) 
-		{
-			GMLVar nextID = GMLVar(i);
-			GMLVar* args[] = { &nextID };
-			GMLVar* exists = gml_call_func(checkFunc, 1, args);
+		GMLVar next_id = GMLVar(i);
+		GMLVar* args[] = { &next_id };
+		GMLVar* exists = __impl_gml_call_func(func_id, 1, args);
 			
+		if (!exists) break;
 
-			if (!exists) 
-			{
-				break;
-			}
-
-			if (!exists->truthy()) 
-			{
-				val = i;
-				delete exists;
-				break;
-			}
+		if (exists->truthy() == false) 
+		{
+			val = i;
 			delete exists;
+			break;
 		}
 
-		return val;
+		delete exists;
 	}
+
+	return val;
 }

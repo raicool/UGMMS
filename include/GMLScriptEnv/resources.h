@@ -1,8 +1,5 @@
 #pragma once
 
-namespace resources 
-{
-	// Used to calculate the built-in number of a resource
-	// Takes a GML function id used to check whether an ID exists (like object_exists)
-	int count(int checkFunc);
-}
+// Used to calculate the built-in number of a resource
+// check_func should be the id to a built-in function such as (object_exists, sprite_exists, sound_exists, etc)
+int resources_count(int func_id);

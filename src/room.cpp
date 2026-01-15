@@ -12,20 +12,20 @@ namespace room
 
 	func_roomdata room_data = nullptr;
 
-	int roomCount = -1;
+	int room_count = -1;
 
 	void __setup() 
 	{
 		__impl_find_room_data();
 
-		if (roomCount != -1) return;
+		if (room_count != -1) return;
 		func_info room_exists = get_func_info("room_exists");
-		roomCount = resources::count(room_exists.id);
+		room_count = resources_count(room_exists.id);
 	}
 
 	int __impl_get_room_count() 
 	{
-		return roomCount;
+		return room_count;
 	}
 
 	void* __impl_find_room_data()
