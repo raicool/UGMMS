@@ -10,13 +10,24 @@ struct func_info
 	void* ptr;
 };
 
-typedef GMLVar& (*GMLScriptPtr)(
+typedef RValue& (*PFUNC_YYGMLScript)(
 	_In_ GMLInstance* self, 
 	_In_ GMLInstance* other,
-	_Out_ GMLVar& out, 
+	_Out_ RValue& out, 
 	_In_ int argCount,
-	_In_ GMLVar* args
+	_In_ RValue* args
 );
+
+typedef void (*PFUNC_YYGML)(
+	_In_ CInstance* self,
+	_In_ CInstance* other
+	);
+
+using FNVariable = bool(*)(
+	CInstance* Instance,
+	int Index,
+	RValue* Value
+	);
 
 static RVariableRoutine* builtin_array = nullptr;
 static int32_t* builtin_count = nullptr;
@@ -33,10 +44,10 @@ func_info __impl_get_func_info(
 
 // Call a built-in GM function using its numerical ID
 // Arguments are passed by array
-GMLVar* __impl_gml_call_func(
+RValue* __impl_gml_call_func(
 	_In_ int func_id,
 	_In_ int arg_count,
-	_In_ GMLVar** args
+	_In_ RValue** args
 );
 
 size_t __impl_get_builtin_variable_index(

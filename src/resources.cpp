@@ -8,9 +8,9 @@ int resources_count(int func_id)
 
 	for (int i = 0;; i++)
 	{
-		GMLVar next_id = GMLVar(i);
-		GMLVar* args[] = { &next_id };
-		GMLVar* exists = __impl_gml_call_func(func_id, 1, args);
+		RValue next_id = RValue(i);
+		RValue* args[] = { &next_id };
+		RValue* exists = __impl_gml_call_func(func_id, 1, args);
 			
 		if (!exists) break;
 

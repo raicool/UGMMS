@@ -28,7 +28,7 @@ CRoomInternal& CRoom::GetMembers()
 std::unordered_map<std::string, func_info>* functionIDMap = new std::unordered_map<std::string, func_info>();
 
 // Function to call built-in GML functions
-GMLVar* (*GMLLegacyCall)(GMLInstance* instSelf, GMLInstance* instOther, GMLVar& gmlResult, int argumentNumber, int functionID, GMLVar** arguments) = NULL;
+RValue* (*GMLLegacyCall)(GMLInstance* instSelf, GMLInstance* instOther, RValue& gmlResult, int argumentNumber, int functionID, RValue** arguments) = NULL;
 
 //////////////////////////////////////////////////////////////////////////////
 // SETUP /////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ std::string __gml_setup()
 		// Failed to find it
 		return "Failed to find CallLegacyFunction";
 	}
-	GMLLegacyCall = (GMLVar * (*)(GMLInstance*, GMLInstance*, GMLVar&, int, int, GMLVar**))legacyCallAddr;
+	GMLLegacyCall = (RValue * (*)(GMLInstance*, GMLInstance*, RValue&, int, int, RValue**))legacyCallAddr;
 
 	////// Search for second ASM chunk containing pointer to pointer to function array
 	// '?'d out bit here is the pointer we need
@@ -202,16 +202,16 @@ func_info __impl_get_func_info(
 	return __impl_get_func_info(std::string(name));
 }
 
-GMLVar* GMLRetDummy = new GMLVar();
-GMLVar* __impl_gml_call_func(
+RValue* GMLRetDummy = new RValue();
+RValue* __impl_gml_call_func(
 	_In_ int functionID,
 	_In_ int argCount,
-	_In_ GMLVar** args
+	_In_ RValue** args
 )
 {
 	if (GMLLegacyCall == NULL) return NULL;
 
-	GMLVar* out = new GMLVar();
+	RValue* out = new RValue();
 
 	GMLLegacyCall(NULL, NULL, *out, argCount, functionID, args);
 

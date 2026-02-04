@@ -46,7 +46,7 @@ struct GMLStringRef
 };
 
 #pragma pack(push, 4)
-struct GMLVar
+struct RValue
 {
 	union
 	{
@@ -135,25 +135,25 @@ struct GMLVar
 		return std::string(getCString());
 	}
 
-	GMLVar()
+	RValue()
 	{
 		type = GML_TYPE_UNDEFINED;
 		valuePointer = NULL;
 	}
 
-	GMLVar(double value) { setReal(value); }
-	GMLVar(float value) { setReal(value); }
-	GMLVar(int value) { setInt32(value); }
-	GMLVar(long long value) { setInt64(value); }
-	GMLVar(bool value) { setReal(value ? 1 : 0); }
+	RValue(double value) { setReal(value); }
+	RValue(float value) { setReal(value); }
+	RValue(int value) { setInt32(value); }
+	RValue(long long value) { setInt64(value); }
+	RValue(bool value) { setReal(value ? 1 : 0); }
 
-	GMLVar(const char* value)
+	RValue(const char* value)
 	{
 		type = GML_TYPE_STRING;
 		valueString = new GMLStringRef(_strdup(value));
 	}
 
-	GMLVar(std::string value)
+	RValue(std::string value)
 	{
 		type = GML_TYPE_STRING;
 		valueString = new GMLStringRef(_strdup(value.c_str()));
@@ -201,41 +201,43 @@ struct GMLVar
 	}
 
 };
+// @deprecated use RValue instead
+using GMLVar = RValue;
 
 struct CInstanceBase
 {
 	virtual ~CInstanceBase() = 0;
 
-	GMLVar* m_YYVars;
+	RValue* m_YYVars;
 };
 
 struct YYObjectBase : CInstanceBase {};
 
 struct CInstance : YYObjectBase
 {
-	GMLVar ToRValue() const;
+	RValue ToRValue() const;
 
-	GMLVar* GetRefMember(
+	RValue* GetRefMember(
 		const char* MemberName
 	);
 
-	GMLVar* GetRefMember(
+	RValue* GetRefMember(
 		const std::string& MemberName
 	);
 
-	const GMLVar* GetRefMember(
+	const RValue* GetRefMember(
 		const char* MemberName
 	) const;
 
-	const GMLVar* GetRefMember(
+	const RValue* GetRefMember(
 		const std::string& MemberName
 	) const;
 
-	GMLVar GetMember(
+	RValue GetMember(
 		const char* MemberName
 	) const;
 
-	GMLVar GetMember(
+	RValue GetMember(
 		const std::string& MemberName
 	) const;
 
@@ -245,21 +247,6 @@ struct CInstance : YYObjectBase
 		int32_t InstanceID
 	);
 };
-
-using PFUNC_YYGMLScript = GMLVar & (*)(
-	CInstance* Self,
-	CInstance* Other,
-	GMLVar& Result,
-	int ArgumentCount,
-	GMLVar* Arguments[]
-	);
-
-using PFUNC_YYGML = void(*)(
-	CInstance* Self,
-	CInstance* Other
-	);
-
-using PFUNC_RAW = void(*)();
 
 // opaque structs
 struct CBackGM;
@@ -282,12 +269,6 @@ struct CLayerInstanceElement;
 // Represents a layer element. Refers to a sprite.
 struct CLayerSpriteElement;
 
-using FNVariable = bool(*)(
-	CInstance* Instance,
-	int Index,
-	GMLVar* Value
-	);
-
 struct RVariableRoutine
 {
 	const char* m_Name;
@@ -302,7 +283,7 @@ struct RToken
 	unsigned int m_Type;
 	int m_Ind;
 	int m_Ind2;
-	GMLVar m_Value;
+	RValue m_Value;
 	int m_ItemNumber;
 	RToken* m_Items;
 	int m_Position;
@@ -328,7 +309,7 @@ struct CCode
 	int m_Compiled;
 	const char* m_Str;
 	RToken m_Token;
-	GMLVar m_Value;
+	RValue m_Value;
 	void* m_VmInstance;
 	void* m_VmDebugInfo;
 	char* m_Code;
@@ -399,7 +380,7 @@ struct YYRoom
 	float m_PhysicsPixelToMeters;
 };
 
-// Note: this is not how GMLVar store arrays
+// Note: this is not how RValue store arrays
 template <typename T>
 struct CArrayStructure
 {
@@ -463,11 +444,11 @@ struct CLayer
 	bool m_Deleting;
 	bool m_Dynamic;
 	const char* m_Name;
-	GMLVar m_BeginScript;
-	GMLVar m_EndScript;
+	RValue m_BeginScript;
+	RValue m_EndScript;
 	bool m_EffectEnabled;
 	bool m_EffectPendingEnabled;
-	GMLVar m_Effect;
+	RValue m_Effect;
 	CLayerEffectInfo* m_InitialEffectInfo;
 	int32_t m_ShaderID;
 	LinkedList<CLayerElementBase> m_Elements;
