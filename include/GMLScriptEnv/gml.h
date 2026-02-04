@@ -10,25 +10,6 @@ struct func_info
 	void* ptr;
 };
 
-typedef RValue& (*PFUNC_YYGMLScript)(
-	_In_ GMLInstance* self, 
-	_In_ GMLInstance* other,
-	_Out_ RValue& out, 
-	_In_ int argCount,
-	_In_ RValue* args
-);
-
-typedef void (*PFUNC_YYGML)(
-	_In_ CInstance* self,
-	_In_ CInstance* other
-	);
-
-using FNVariable = bool(*)(
-	CInstance* Instance,
-	int Index,
-	RValue* Value
-	);
-
 static RVariableRoutine* builtin_array = nullptr;
 static int32_t* builtin_count = nullptr;
 

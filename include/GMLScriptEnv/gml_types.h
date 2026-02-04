@@ -248,6 +248,27 @@ struct CInstance : YYObjectBase
 	);
 };
 
+typedef RValue& (*PFUNC_YYGMLScript)(
+	_In_ GMLInstance* self,
+	_In_ GMLInstance* other,
+	_Out_ RValue& out,
+	_In_ int argCount,
+	_In_ RValue* args
+	);
+
+typedef void (*PFUNC_YYGML)(
+	_In_ CInstance* self,
+	_In_ CInstance* other
+	);
+
+typedef void (*PFUNC_RAW)();
+
+using FNVariable = bool(*)(
+	CInstance* Instance,
+	int Index,
+	RValue* Value
+	);
+
 // opaque structs
 struct CBackGM;
 struct CViewGM;
