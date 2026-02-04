@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gml_types.h"
+#include "yoyo.h"
 
 #include <string>
 
