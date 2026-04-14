@@ -2,9 +2,6 @@
 
 #include <string>
 
-class GMLInstanceBase;
-class GMLInstance;
-
 enum
 {
 	GML_TYPE_REAL = 0,
@@ -58,7 +55,7 @@ struct RValue
 		void* valuePointer; // ptr
 	};
 	int flags; // Not sure what this is used for
-	int	type;
+	int	type = GML_TYPE_UNDEFINED;
 
 	inline void setReal(double value)
 	{
@@ -135,17 +132,37 @@ struct RValue
 		return std::string(getCString());
 	}
 
-	RValue()
+	RValue() { valueInt64 = NULL; }
+
+	RValue(double value)
 	{
-		type = GML_TYPE_UNDEFINED;
-		valuePointer = NULL;
+		valueInt64 = NULL;
+		setReal(value);
 	}
 
-	RValue(double value) { setReal(value); }
-	RValue(float value) { setReal(value); }
-	RValue(int value) { setInt32(value); }
-	RValue(long long value) { setInt64(value); }
-	RValue(bool value) { setReal(value ? 1 : 0); }
+	RValue(float value)
+	{
+		valueInt64 = NULL;
+		setReal(value);
+	}
+
+	RValue(int value)
+	{
+		valueInt64 = NULL;
+		setInt32(value);
+	}
+
+	RValue(long long value)
+	{
+		valueInt64 = NULL;
+		setInt64(value);
+	}
+
+	RValue(bool value) 
+	{
+		valueInt64 = NULL;
+		setReal(value ? 1 : 0);
+	}
 
 	RValue(const char* value)
 	{
@@ -193,8 +210,12 @@ struct RValue
 	{
 		if (type == GML_TYPE_STRING)
 		{
-			valueString->free();
-			delete valueString;
+			if (valueString->string)
+			{
+				valueString->free();
+				delete valueString;
+			}
+
 			type = GML_TYPE_UNDEFINED;
 			valuePointer = NULL;
 		}
@@ -248,9 +269,12 @@ struct CInstance : YYObjectBase
 	);
 };
 
+// @deprecated use CInstance instead
+using GMLInstance = CInstance;
+
 typedef RValue& (*PFUNC_YYGMLScript)(
-	_In_ GMLInstance* self,
-	_In_ GMLInstance* other,
+	_In_ CInstance* self,
+	_In_ CInstance* other,
 	_Out_ RValue& out,
 	_In_ int argCount,
 	_In_ RValue* args
