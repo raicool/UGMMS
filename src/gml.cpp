@@ -28,7 +28,7 @@ CRoomInternal& CRoom::GetMembers()
 std::unordered_map<std::string, func_info>* functionIDMap = new std::unordered_map<std::string, func_info>();
 
 // Function to call built-in GML functions
-RValue* (*GMLLegacyCall)(GMLInstance* instSelf, GMLInstance* instOther, RValue& gmlResult, int argumentNumber, int functionID, RValue** arguments) = NULL;
+RValue* (*GMLLegacyCall)(CInstance* instSelf, CInstance* instOther, RValue& gmlResult, int argumentNumber, int functionID, RValue** arguments) = NULL;
 
 //////////////////////////////////////////////////////////////////////////////
 // SETUP /////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ std::string __gml_setup()
 		// Failed to find it
 		return "Failed to find CallLegacyFunction";
 	}
-	GMLLegacyCall = (RValue * (*)(GMLInstance*, GMLInstance*, RValue&, int, int, RValue**))legacyCallAddr;
+	GMLLegacyCall = (RValue * (*)(CInstance*, CInstance*, RValue&, int, int, RValue**))legacyCallAddr;
 
 	////// Search for second ASM chunk containing pointer to pointer to function array
 	// '?'d out bit here is the pointer we need
