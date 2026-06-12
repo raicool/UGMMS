@@ -54,7 +54,8 @@ struct RValue
 		void* valueArray; // array
 		void* valuePointer; // ptr
 	};
-	int flags; // Not sure what this is used for
+
+	int flags = 0; // Not sure what this is used for
 	int	type = GML_TYPE_UNDEFINED;
 
 	inline void setReal(double value)
@@ -99,20 +100,32 @@ struct RValue
 		valuePointer = NULL;
 	}
 
+	double getInt32()
+	{
+		switch (type)
+		{
+		case GML_TYPE_INT32: return valueInt32;
+		case GML_TYPE_INT64: return (int)(valueInt64 & 0xffffffff);
+		case GML_TYPE_BOOL: return (int)(valueInt32 > 0);
+		case GML_TYPE_REAL: return (int)valueReal;
+		case GML_TYPE_NULL: return 0;
+		}
+
+		return 0;
+	}
+
 	double getReal()
 	{
 		switch (type)
 		{
-		case GML_TYPE_REAL:
-		case GML_TYPE_BOOL:
-			return valueReal;
-		case GML_TYPE_INT32:
-			return (double)valueInt32;
-		case GML_TYPE_INT64:
-			return (double)valueInt64;
-		default:
-			return 0;
+		case GML_TYPE_INT32: return (double)valueInt32;
+		case GML_TYPE_INT64: return (double)valueInt64;
+		case GML_TYPE_BOOL: return (double)(valueInt32 > 0);
+		case GML_TYPE_REAL: return valueReal;
+		case GML_TYPE_NULL: return 0;
 		}
+
+		return 0;
 	}
 
 	const char* getCString()
