@@ -23,14 +23,14 @@ enum
 struct GMLStringRef
 {
 	const char* string;
-	int refCountGML;
+	int ref_count;
 	int size;
 
 	GMLStringRef(const char* str)
 	{
 		string = str;
 		size = std::strlen(str);
-		refCountGML = 1;
+		ref_count = 1;
 	}
 
 	void free()
@@ -47,190 +47,201 @@ struct RValue
 {
 	union
 	{
-		int valueInt32; // int32
-		long long valueInt64; // int64
-		double valueReal; // number
-		GMLStringRef* valueString; // string
-		void* valueArray; // array
-		void* valuePointer; // ptr
+		int value_s32; // int32
+		long long value_s64; // int64
+		double value_real; // number
+		GMLStringRef* value_stringref; // string
+		void* value_array; // array
+		void* value_ptr; // ptr
 	};
 
 	int flags = 0; // Not sure what this is used for
 	int	type = GML_TYPE_UNDEFINED;
 
-	inline void setReal(double value)
+	inline void set_real(double value)
 	{
-		freeValue();
+		free_stringref();
 		type = GML_TYPE_REAL;
-		valueReal = value;
+		value_real = value;
 	}
 
-	inline void setInt32(int value)
+	double get_s32()
 	{
-		freeValue();
+		switch (type)
+		{
+		case GML_TYPE_INT32: return value_s32;
+		case GML_TYPE_INT64: return (int)(value_s64 & 0xffffffff);
+		case GML_TYPE_BOOL: return (int)(value_s32 > 0);
+		case GML_TYPE_REAL: return (int)value_real;
+		case GML_TYPE_NULL: return 0;
+		}
+
+		return 0;
+	}
+
+	inline void set_s32(int value)
+	{
+		free_stringref();
 		type = GML_TYPE_INT32;
-		valueInt32 = value;
+		value_s32 = value;
 	}
 
-	inline void setInt64(long long value)
+	inline void set_s64(long long value)
 	{
-		freeValue();
+		free_stringref();
 		type = GML_TYPE_INT64;
-		valueInt64 = value;
+		value_s64 = value;
 	}
 
-	inline void setBool(bool value)
+	inline void set_bool(bool value)
 	{
-		freeValue();
+		free_stringref();
 		type = GML_TYPE_BOOL;
-		valueReal = value ? 1 : 0;
+		value_real = value ? 1 : 0;
 	}
 
-	inline void setString(const char* value)
+	inline void set_stringref(const char* value)
 	{
-		freeValue();
+		free_stringref();
 		type = GML_TYPE_STRING;
-		valueString = new GMLStringRef(_strdup(value));
+		value_stringref = new GMLStringRef(_strdup(value));
 	}
 
-	inline void setUndefined()
+	inline void free_and_undefine()
 	{
-		freeValue();
+		free_stringref();
 		type = GML_TYPE_UNDEFINED;
-		valuePointer = NULL;
+		value_ptr = NULL;
 	}
 
-	double getInt32()
+	double get_real()
 	{
 		switch (type)
 		{
-		case GML_TYPE_INT32: return valueInt32;
-		case GML_TYPE_INT64: return (int)(valueInt64 & 0xffffffff);
-		case GML_TYPE_BOOL: return (int)(valueInt32 > 0);
-		case GML_TYPE_REAL: return (int)valueReal;
+		case GML_TYPE_INT32: return (double)value_s32;
+		case GML_TYPE_INT64: return (double)value_s64;
+		case GML_TYPE_BOOL: return (double)(value_s32 > 0);
+		case GML_TYPE_REAL: return value_real;
 		case GML_TYPE_NULL: return 0;
 		}
 
 		return 0;
 	}
 
-	double getReal()
-	{
-		switch (type)
-		{
-		case GML_TYPE_INT32: return (double)valueInt32;
-		case GML_TYPE_INT64: return (double)valueInt64;
-		case GML_TYPE_BOOL: return (double)(valueInt32 > 0);
-		case GML_TYPE_REAL: return valueReal;
-		case GML_TYPE_NULL: return 0;
-		}
-
-		return 0;
-	}
-
-	const char* getCString()
+	const char* get_cstr()
 	{
 		if (type == GML_TYPE_STRING)
-		{
-			if (valueString->string != NULL)
+			if (value_stringref->string != nullptr)
 			{
-				return valueString->string;
+				return value_stringref->string;
 			}
-		}
+
 		return "";
 	}
 
-	inline std::string getString()
+	inline std::string get_string()
 	{
-		return std::string(getCString());
+		return std::string(get_cstr());
 	}
 
-	RValue() { valueInt64 = NULL; }
+	RValue() { value_s64 = NULL; }
 
 	RValue(double value)
 	{
-		valueInt64 = NULL;
-		setReal(value);
+		value_s64 = NULL;
+		set_real(value);
 	}
 
 	RValue(float value)
 	{
-		valueInt64 = NULL;
-		setReal(value);
+		value_s64 = NULL;
+		set_real(value);
 	}
 
 	RValue(int value)
 	{
-		valueInt64 = NULL;
-		setInt32(value);
+		value_s64 = NULL;
+		set_s32(value);
 	}
 
 	RValue(long long value)
 	{
-		valueInt64 = NULL;
-		setInt64(value);
+		value_s64 = NULL;
+		set_s64(value);
 	}
 
-	RValue(bool value) 
+	RValue(bool value)
 	{
-		valueInt64 = NULL;
-		setReal(value ? 1 : 0);
+		value_s64 = NULL;
+		set_real(value ? 1 : 0);
 	}
 
 	RValue(const char* value)
 	{
 		type = GML_TYPE_STRING;
-		valueString = new GMLStringRef(_strdup(value));
+		value_stringref = new GMLStringRef(_strdup(value));
 	}
 
 	RValue(std::string value)
 	{
 		type = GML_TYPE_STRING;
-		valueString = new GMLStringRef(_strdup(value.c_str()));
+		value_stringref = new GMLStringRef(_strdup(value.c_str()));
 	}
 
-	std::string toString()
+	std::string as_string()
 	{
 		switch (type)
 		{
-		case GML_TYPE_REAL:
-		case GML_TYPE_BOOL:
-			return std::to_string(valueReal);
-		case GML_TYPE_INT32:
-			return std::to_string(valueInt32);
-		case GML_TYPE_INT64:
-			return std::to_string(valueInt64);
-		case GML_TYPE_POINTER:
-			return "*" + std::to_string((int64_t)valuePointer);
-		case GML_TYPE_UNDEFINED:
-			return "undefined";
-		case GML_TYPE_STRING:
-			return getString();
-		case GML_TYPE_ARRAY:
-			return "array";
-		default:
-			return "unkonwn";
+		case GML_TYPE_REAL: return std::to_string(value_real);
+		case GML_TYPE_BOOL: return truthy() ? "true" : "false";
+		case GML_TYPE_INT32: return std::to_string(value_s32);
+		case GML_TYPE_INT64: return std::to_string(value_s64);
+		case GML_TYPE_POINTER: return "*" + std::to_string((int64_t)value_ptr);
+		case GML_TYPE_UNDEFINED: return "<undefined>";
+		case GML_TYPE_STRING: return value_stringref->string;
+		case GML_TYPE_ARRAY: return "array";
+		default: return "unknown";
 		}
+	}
+
+	const char* as_cstr()
+	{
+		char ret[32];
+
+		switch (type)
+		{
+		case GML_TYPE_REAL: sprintf_s(ret, "%d", value_real); break;
+		case GML_TYPE_BOOL: ret = truthy() ? "true" : "false"; break;
+		case GML_TYPE_INT32: sprintf_s(ret, "%i", value_s32); break;
+		case GML_TYPE_INT64: sprintf_s(ret, "%l", value_s64); break;
+		case GML_TYPE_POINTER: sprintf_s(ret, "*%08x", value_ptr); break;
+		case GML_TYPE_UNDEFINED: ret = "<undefined>"; break;
+		case GML_TYPE_STRING: ret = value_stringref->string;  break;
+		case GML_TYPE_ARRAY: ret = "<array>"; break;
+		default: ret = "unknown";
+		}
+
+		return ret;
 	}
 
 	inline bool truthy()
 	{
 		// Returns whether the value casts to true in GML
-		return getReal() > 0.5;
+		return value_real > 0.5;
 	}
 
-	inline void freeValue()
+	inline void free_stringref()
 	{
 		if (type == GML_TYPE_STRING)
 		{
-			if (valueString->string)
+			if (value_stringref->string)
 			{
-				valueString->free();
-				delete valueString;
+				value_stringref->free();
+				delete value_stringref;
 			}
 
 			type = GML_TYPE_UNDEFINED;
-			valuePointer = NULL;
+			value_ptr = NULL;
 		}
 	}
 
@@ -356,7 +367,7 @@ struct YYGMLFuncs
 		PFUNC_YYGML m_CodeFunction;
 		PFUNC_RAW m_RawFunction;
 	};
-	void* m_FunctionVariables; // YYVAR
+	void* m_FunctionVariables; // RValue array
 };
 
 struct CCode
@@ -672,9 +683,84 @@ public:
 	}
 };
 
+struct DynamicArrayOfRValue
+{
+	int length;
+	RValue* arr;
+};
+
+struct RefDynamicArrayOfRValue
+{
+	int	refcount;
+	DynamicArrayOfRValue* pArray;
+	void* pOwner;
+	int visited;
+	int length;
+};
+
+template<typename T>
+struct Hash
+{
+	int field0_0x0;
+	int field1_0x4;
+	int field2_0x8;
+};
+
+template<typename T>
+struct CObjectHashNode
+{
+	CObjectHashNode* m_prev;
+	CObjectHashNode* m_next;
+	uint32_t m_key;
+	T* m_object;
+};
+
+template<typename T>
+struct CObjectHashBucket
+{
+	CObjectHashNode<T>* m_head;
+	CObjectHashNode<T>* m_tail;
+};
+
+template<typename T>
+struct CObjectHashMap
+{
+	CObjectHashBucket<T>* m_buckets;
+	uint32_t m_mask;
+	uint32_t m_count;
+
+	T* find_object(uint32_t key) const
+	{
+		if (!m_buckets)
+		{
+			return nullptr;
+		}
+		uint32_t index = key & m_mask;
+		for (auto node = m_buckets[index].m_head; node; node = node->m_next)
+		{
+			if (node->m_key == key)
+			{
+				return node->m_object;
+			}
+		}
+		return nullptr;
+	}
+};
+
+//
+// \brief data structure for gamemaker's internal debug release and init consoles
+//
+// vtable[2] is the only useful one as that calls the print to console function:
+// 
+// void print(tagIConsole* this, const char* fmt, ...)
+//
+struct tagIConsole
+{
+	void** vtable[4];
+};
+
 struct CRoomInternal
 {
-	// CBackGM* m_Backgrounds[8];
 	bool m_EnableViews;
 	bool m_ClearScreen;
 	bool m_ClearDisplayBuffer;
